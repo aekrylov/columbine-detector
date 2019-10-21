@@ -1,3 +1,6 @@
+import requests
+import shutil
+
 import cv2 as cv
 import argparse
 import sys
@@ -13,6 +16,7 @@ inpHeight = 416      #Height of network's input image
 parser = argparse.ArgumentParser(description='Object Detection using YOLO in OPENCV')
 parser.add_argument('--image', help='Path to image file.')
 parser.add_argument('--video', help='Path to video file.')
+parser.add_argument('--download', help='Download extra files if needed', action='store_true')
 args = parser.parse_args()
         
 # Load names of classes
@@ -24,6 +28,14 @@ with open(classesFile, 'rt') as f:
 # Give the configuration and weight files for the model and load the network using them.
 modelConfiguration = "yolov3.cfg"
 modelWeights = "yolov3.weights"
+
+if args.download and not os.path.exists(modelWeights):
+    print("Downloading weights file to the current directory...")
+    with requests.get('https://pjreddie.com/media/files/yolov3.weights', stream=True) as r:
+        r.raise_for_status()
+        with open(modelWeights, 'wb') as f:
+            shutil.copyfileobj(r.raw, f)
+
 
 net = cv.dnn.readNetFromDarknet(modelConfiguration, modelWeights)
 net.setPreferableBackend(cv.dnn.DNN_BACKEND_OPENCV)
