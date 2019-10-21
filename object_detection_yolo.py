@@ -1,11 +1,10 @@
-import requests
-import shutil
+import argparse
+import os.path
+import sys
 
 import cv2 as cv
-import argparse
-import sys
 import numpy as np
-import os.path
+import wget
 
 # Initialize the parameters
 confThreshold = 0.5  #Confidence threshold
@@ -31,11 +30,7 @@ modelWeights = "yolov3.weights"
 
 if args.download and not os.path.exists(modelWeights):
     print("Downloading weights file to the current directory...")
-    with requests.get('https://pjreddie.com/media/files/yolov3.weights', stream=True) as r:
-        r.raise_for_status()
-        with open(modelWeights, 'wb') as f:
-            shutil.copyfileobj(r.raw, f)
-
+    wget.download('https://pjreddie.com/media/files/yolov3.weights', modelWeights)
 
 net = cv.dnn.readNetFromDarknet(modelConfiguration, modelWeights)
 net.setPreferableBackend(cv.dnn.DNN_BACKEND_OPENCV)

@@ -62,8 +62,4 @@ else:
 camera.release()
 cv2.destroyAllWindows()
 
-
-
-
-
-
+vid_writer.release()
